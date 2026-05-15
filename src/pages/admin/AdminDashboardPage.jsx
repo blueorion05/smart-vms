@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import {
   AlertTriangle,
   ChevronDown,
@@ -95,6 +96,8 @@ const buildAreaPath = (values, width, height, padding) => {
 }
 
 function AdminDashboardPage() {
+  const navigate = useNavigate()
+
   return (
     <div className="grid gap-4 pb-2">
       <div className="flex flex-shrink-0 items-center justify-between gap-4">
@@ -117,7 +120,11 @@ function AdminDashboardPage() {
           <strong className="mb-1 block text-[1.1rem] font-bold">2 Active Security Alerts</strong>
           <p className="m-0 max-w-[860px] text-[1.02rem] leading-6">Visitor attempted access to restricted Executive Floor 5 without authorization. QR key rejected.</p>
         </div>
-        <button type="button" className="inline-flex items-center gap-2 rounded-[16px] border-0 bg-[#fa1234] px-5 py-3 text-[1rem] font-bold text-white shadow-[0_10px_18px_rgba(250,18,52,0.24)]">
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-[16px] border-0 bg-[#fa1234] px-5 py-3 text-[1rem] font-bold text-white shadow-[0_10px_18px_rgba(250,18,52,0.24)]"
+          onClick={() => navigate('/admin/security')}
+        >
           View Alerts
           <ChevronRight size={18} />
         </button>

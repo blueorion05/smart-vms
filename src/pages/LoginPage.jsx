@@ -22,8 +22,8 @@ function LoginPage() {
 
         <div className="relative z-10 mt-auto max-w-[760px] pb-6">
           <h1 className="max-w-[11ch] font-[family-name:var(--font-display)] text-[clamp(2.8rem,6vw,4.7rem)] leading-[0.97] tracking-[-0.06em] text-white">
-            Enterprise-Grade
-            <span className="block text-[#35bcff]">Visitor Security</span>
+            <span className="block whitespace-nowrap">Enterprise-Grade</span>
+            <span className="block whitespace-nowrap text-[#35bcff]">Visitor Management System</span>
           </h1>
           <p className="mt-4 max-w-[42ch] text-[1.04rem] leading-[1.45] text-[#d2def8]">
             Real-time monitoring, biometric verification, and intelligent access control for modern smart buildings.
