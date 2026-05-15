@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import {
+  CheckCircle2,
   ChevronDown,
   Download,
   Eye,
@@ -65,6 +67,24 @@ const severityStyles = {
 }
 
 function AdminAuditLogsPage() {
+  const [toast, setToast] = useState(null)
+
+  const handleExport = () => {
+    setToast({
+      title: 'Exporting audit logs...',
+      message: 'Please wait while we prepare your file.',
+      variant: 'info',
+    })
+    window.setTimeout(() => {
+      setToast({
+        title: 'Export complete',
+        message: 'Audit logs are ready to download.',
+        variant: 'success',
+      })
+    }, 1500)
+    window.setTimeout(() => setToast(null), 3200)
+  }
+
   return (
     <div className="grid gap-5 pb-2">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -72,11 +92,35 @@ function AdminAuditLogsPage() {
           <h2 className="m-0 text-[2rem] leading-none tracking-[-0.03em] text-[#0b1937]">Audit Logs</h2>
           <p className="m-0 mt-2 text-[0.98rem] text-[#7f90aa]">Comprehensive system activity trail</p>
         </div>
-        <button className="inline-flex items-center gap-2 rounded-full bg-[#0b142d] px-5 py-3 text-[0.95rem] font-semibold text-white shadow-sm">
+        <button
+          className="inline-flex items-center gap-2 rounded-full bg-[#0b142d] px-5 py-3 text-[0.95rem] font-semibold text-white shadow-sm"
+          onClick={handleExport}
+          type="button"
+        >
           <Download size={18} />
           Export Logs
         </button>
       </div>
+
+      {toast && (
+        <div className="fixed right-6 top-6 z-40 w-full max-w-[360px] px-4 sm:right-8">
+          <div
+            className={`flex items-center gap-3 rounded-[16px] border px-4 py-3 shadow-[0_12px_30px_rgba(15,23,42,0.12)] ${
+              toast.variant === 'success'
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                : 'border-[#dbe7f5] bg-[#eff6ff] text-[#1d4ed8]'
+            }`}
+          >
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-white">
+              {toast.variant === 'success' ? <CheckCircle2 size={16} /> : <Info size={16} />}
+            </span>
+            <div>
+              <strong className="block text-[0.95rem]">{toast.title}</strong>
+              <span className="text-[0.82rem] text-[#5b7cc5]">{toast.message}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {auditStats.map((stat) => (

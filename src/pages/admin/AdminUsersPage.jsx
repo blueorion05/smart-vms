@@ -1,11 +1,14 @@
+import { useState } from 'react'
 import {
   CheckCircle2,
   ChevronDown,
   Clock,
+  Eye,
   Pause,
   Plus,
   Search,
   Users,
+  X,
 } from 'lucide-react'
 
 const userManagementData = {
@@ -27,6 +30,8 @@ const userManagementData = {
 }
 
 function AdminUsersPage() {
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+
   return (
     <div className="grid gap-4 pb-2">
       <div className="flex flex-shrink-0 items-center justify-between gap-4">
@@ -34,7 +39,11 @@ function AdminUsersPage() {
           <h2 className="m-0 text-[2rem] leading-none tracking-[-0.03em] text-[#0b1937]">User & Role Management</h2>
           <p className="m-0 mt-2 text-[0.98rem] text-[#7f90aa]">Create and manage system user accounts</p>
         </div>
-        <button className="inline-flex items-center gap-2 rounded-[16px] bg-[#2563ff] px-5 py-3 text-[1rem] font-bold text-white shadow-[0_10px_18px_rgba(37,99,255,0.24)]">
+        <button
+          className="inline-flex items-center gap-2 rounded-[16px] bg-[#2563ff] px-5 py-3 text-[1rem] font-bold text-white shadow-[0_10px_18px_rgba(37,99,255,0.24)]"
+          onClick={() => setIsCreateOpen(true)}
+          type="button"
+        >
           <Plus size={18} />
           Create User
         </button>
@@ -142,6 +151,109 @@ function AdminUsersPage() {
           </table>
         </div>
       </article>
+
+      {isCreateOpen && (
+        <div className="fixed inset-0 z-40 grid place-items-center bg-slate-900/40 px-4">
+          <div className="w-full max-w-[560px] rounded-[24px] bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.35)]">
+            <div className="flex items-start justify-between gap-4 border-b border-[#e5eef9] pb-4">
+              <div>
+                <h3 className="m-0 text-[1.4rem] font-bold text-[#0b1937]">Create New User</h3>
+                <p className="m-0 mt-1 text-[0.95rem] text-[#7f90aa]">Create Security or Receptionist accounts only</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCreateOpen(false)}
+                className="grid h-9 w-9 place-items-center rounded-full text-[#7f90aa] hover:bg-[#f3f5f9]"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form className="mt-4 grid gap-4">
+              <div className="grid gap-2">
+                <label className="text-[0.9rem] font-semibold text-[#1f2a44]">Full Name *</label>
+                <input
+                  className="h-11 rounded-full border border-transparent bg-[#f2f5f9] px-4 text-[0.95rem] text-[#1f2a44] outline-none"
+                  placeholder="Full name"
+                  type="text"
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <label className="text-[0.9rem] font-semibold text-[#1f2a44]">Email *</label>
+                  <input
+                    className="h-11 rounded-full border border-transparent bg-[#f2f5f9] px-4 text-[0.95rem] text-[#1f2a44] outline-none"
+                    placeholder="user@securevms.com"
+                    type="email"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-[0.9rem] font-semibold text-[#1f2a44]">Phone</label>
+                  <input
+                    className="h-11 rounded-full border border-transparent bg-[#f2f5f9] px-4 text-[0.95rem] text-[#1f2a44] outline-none"
+                    placeholder="+1 (555) 0000"
+                    type="tel"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <label className="text-[0.9rem] font-semibold text-[#1f2a44]">Role *</label>
+                <select className="h-11 rounded-full border border-transparent bg-[#f2f5f9] px-4 text-[0.95rem] text-[#1f2a44] outline-none">
+                  <option>Security Personnel</option>
+                  <option>Receptionist</option>
+                </select>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <label className="text-[0.9rem] font-semibold text-[#1f2a44]">Password *</label>
+                  <div className="relative">
+                    <input
+                      className="h-11 w-full rounded-full border border-transparent bg-[#f2f5f9] px-4 pr-10 text-[0.95rem] text-[#1f2a44] outline-none"
+                      placeholder="Min 8 characters"
+                      type="password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8fa1bf]"
+                      aria-label="Toggle password visibility"
+                    >
+                      <Eye size={16} />
+                    </button>
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-[0.9rem] font-semibold text-[#1f2a44]">Confirm Password *</label>
+                  <input
+                    className="h-11 rounded-full border border-transparent bg-[#f2f5f9] px-4 text-[0.95rem] text-[#1f2a44] outline-none"
+                    placeholder="Repeat password"
+                    type="password"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateOpen(false)}
+                  className="h-11 rounded-full bg-[#f2f5f9] text-[0.95rem] font-semibold text-[#1f2a44]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="h-11 rounded-full bg-[#2563ff] text-[0.95rem] font-semibold text-white"
+                >
+                  Create Account
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

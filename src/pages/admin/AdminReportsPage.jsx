@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import {
   BarChart3,
   Calendar,
+  CheckCircle2,
   Download,
   FileDown,
+  Info,
   LineChart,
   PieChart,
 } from 'lucide-react'
@@ -43,6 +46,24 @@ const getHeatColor = (value) => {
 }
 
 function AdminReportsPage() {
+  const [toast, setToast] = useState(null)
+
+  const handleExport = (type) => {
+    setToast({
+      title: `Exporting ${type} report...`,
+      message: 'Please wait while we prepare your file.',
+      variant: 'info',
+    })
+    window.setTimeout(() => {
+      setToast({
+        title: 'Export complete',
+        message: `${type} report is ready to download.`,
+        variant: 'success',
+      })
+    }, 1500)
+    window.setTimeout(() => setToast(null), 3200)
+  }
+
   return (
     <div className="grid gap-5 pb-2">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -54,14 +75,42 @@ function AdminReportsPage() {
           <button className="inline-flex items-center gap-2 rounded-full border border-[#e1e8f3] bg-white px-4 py-2 text-[0.85rem] text-[#1f2a44]">
             This Month <Download size={16} />
           </button>
-          <button className="inline-flex items-center gap-2 rounded-full bg-[#0b142d] px-4 py-2 text-[0.85rem] font-semibold text-white">
+          <button
+            className="inline-flex items-center gap-2 rounded-full bg-[#0b142d] px-4 py-2 text-[0.85rem] font-semibold text-white"
+            onClick={() => handleExport('PDF')}
+            type="button"
+          >
             <FileDown size={16} /> Export PDF
           </button>
-          <button className="inline-flex items-center gap-2 rounded-full border border-[#e1e8f3] bg-white px-4 py-2 text-[0.85rem] font-semibold text-[#1f2a44]">
+          <button
+            className="inline-flex items-center gap-2 rounded-full border border-[#e1e8f3] bg-white px-4 py-2 text-[0.85rem] font-semibold text-[#1f2a44]"
+            onClick={() => handleExport('CSV')}
+            type="button"
+          >
             <FileDown size={16} /> Export CSV
           </button>
         </div>
       </div>
+
+      {toast && (
+        <div className="fixed right-6 top-6 z-40 w-full max-w-[360px] px-4 sm:right-8">
+          <div
+            className={`flex items-center gap-3 rounded-[16px] border px-4 py-3 shadow-[0_12px_30px_rgba(15,23,42,0.12)] ${
+              toast.variant === 'success'
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                : 'border-[#dbe7f5] bg-[#eff6ff] text-[#1d4ed8]'
+            }`}
+          >
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-white">
+              {toast.variant === 'success' ? <CheckCircle2 size={16} /> : <Info size={16} />}
+            </span>
+            <div>
+              <strong className="block text-[0.95rem]">{toast.title}</strong>
+              <span className="text-[0.82rem] text-[#5b7cc5]">{toast.message}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {reportStats.map((stat) => (
