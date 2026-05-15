@@ -1,0 +1,165 @@
+import {
+  ChevronDown,
+  Download,
+  Eye,
+  Filter,
+  Info,
+  Search,
+  ShieldAlert,
+  TriangleAlert,
+} from 'lucide-react'
+
+const auditStats = [
+  { label: 'Info', value: 6, tone: 'border-blue-200 bg-blue-50 text-blue-600', icon: Info },
+  { label: 'Warning', value: 4, tone: 'border-amber-200 bg-amber-50 text-amber-700', icon: TriangleAlert },
+  { label: 'Critical', value: 2, tone: 'border-red-200 bg-red-50 text-red-600', icon: ShieldAlert },
+]
+
+const auditLogs = [
+  {
+    id: 'LG-100',
+    severity: 'Info',
+    user: 'Alexandra Chen',
+    role: 'Admin',
+    action: 'User Created',
+    target: 'Daniel Park (Receptionist)',
+    timestamp: '2026-03-02 08:45:22',
+    ip: '192.168.1.100',
+  },
+  {
+    id: 'LG-101',
+    severity: 'Info',
+    user: 'Sofia Rodriguez',
+    role: 'Receptionist',
+    action: 'Visitor Approved',
+    target: 'James Thompson (VIS-001)',
+    timestamp: '2026-03-02 09:14:55',
+    ip: '192.168.1.105',
+  },
+  {
+    id: 'LG-102',
+    severity: 'Warning',
+    user: 'Marcus Williams',
+    role: 'Security',
+    action: 'Floor Locked',
+    target: 'Floor 5 - Executive',
+    timestamp: '2026-03-02 14:33:00',
+    ip: '192.168.1.110',
+  },
+  {
+    id: 'LG-103',
+    severity: 'Critical',
+    user: 'System',
+    role: 'Automation',
+    action: 'Unauthorized Access',
+    target: 'Executive Suite - Floor 5',
+    timestamp: '2026-03-02 14:32:15',
+    ip: '192.168.1.140',
+  },
+]
+
+const severityStyles = {
+  Info: 'border-blue-200 bg-blue-50 text-blue-600',
+  Warning: 'border-amber-200 bg-amber-50 text-amber-700',
+  Critical: 'border-red-200 bg-red-50 text-red-600',
+}
+
+function AdminAuditLogsPage() {
+  return (
+    <div className="grid gap-5 pb-2">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="m-0 text-[2rem] leading-none tracking-[-0.03em] text-[#0b1937]">Audit Logs</h2>
+          <p className="m-0 mt-2 text-[0.98rem] text-[#7f90aa]">Comprehensive system activity trail</p>
+        </div>
+        <button className="inline-flex items-center gap-2 rounded-full bg-[#0b142d] px-5 py-3 text-[0.95rem] font-semibold text-white shadow-sm">
+          <Download size={18} />
+          Export Logs
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {auditStats.map((stat) => (
+          <article key={stat.label} className="rounded-[18px] border border-[#e1e8f3] bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <strong className="text-[1.35rem] text-[#0b1937]">{stat.value}</strong>
+                <div className="mt-2">
+                  <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[0.82rem] font-semibold ${stat.tone}`}>
+                    {stat.label}
+                  </span>
+                </div>
+              </div>
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-[#f2f5f9] text-[#64748b]">
+                <stat.icon size={16} />
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="rounded-[20px] border border-[#e1e8f3] bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex min-w-[260px] flex-1 items-center gap-2 rounded-full bg-[#f2f5f9] px-4 py-3 text-[#7c8ca8]">
+            <Search size={18} className="shrink-0" />
+            <input
+              className="w-full bg-transparent text-[0.95rem] text-[#1f2a44] placeholder-[#7c8ca8] outline-none"
+              placeholder="Search actions, users, targets..."
+              type="text"
+            />
+          </div>
+          <button type="button" className="inline-flex items-center gap-2 rounded-full bg-[#f2f5f9] px-4 py-3 text-[0.92rem] text-[#1f2a44]">
+            <Filter size={16} />
+            All Severity <ChevronDown size={16} />
+          </button>
+          <button type="button" className="inline-flex items-center gap-2 rounded-full bg-[#f2f5f9] px-4 py-3 text-[0.92rem] text-[#1f2a44]">
+            All Roles <ChevronDown size={16} />
+          </button>
+        </div>
+        <p className="m-0 mt-3 text-[0.88rem] text-[#7f90aa]">12 log entries found</p>
+      </div>
+
+      <div className="overflow-hidden rounded-[20px] border border-[#e1e8f3] bg-white shadow-sm">
+        <table className="w-full text-[0.95rem]">
+          <thead>
+            <tr className="border-b border-[#edf1f7] text-left text-[0.78rem] font-semibold uppercase tracking-wide text-[#6c7a95]">
+              <th className="px-6 py-4">Severity</th>
+              <th className="px-6 py-4">User / Role</th>
+              <th className="px-6 py-4">Action</th>
+              <th className="px-6 py-4">Target</th>
+              <th className="px-6 py-4">Timestamp</th>
+              <th className="px-6 py-4">IP Address</th>
+              <th className="px-6 py-4"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {auditLogs.map((log) => (
+              <tr key={log.id} className="border-b border-[#f0f3f9]">
+                <td className="px-6 py-5">
+                  <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[0.82rem] font-semibold ${severityStyles[log.severity]}`}>
+                    {log.severity}
+                  </span>
+                </td>
+                <td className="px-6 py-5">
+                  <strong className="block text-[#0b1937]">{log.user}</strong>
+                  <span className="text-[0.82rem] text-[#8ea1bf]">{log.role}</span>
+                </td>
+                <td className="px-6 py-5 text-[#1f2a44]">{log.action}</td>
+                <td className="px-6 py-5 text-[#1f2a44]">{log.target}</td>
+                <td className="px-6 py-5 text-[#64748b]">{log.timestamp}</td>
+                <td className="px-6 py-5 text-[#64748b]">{log.ip}</td>
+                <td className="px-6 py-5">
+                  <button className="grid h-8 w-8 place-items-center rounded-full text-[#2457ff] hover:bg-[#edf3ff]">
+                    <Eye size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+export default AdminAuditLogsPage
