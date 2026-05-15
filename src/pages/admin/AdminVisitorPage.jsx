@@ -162,7 +162,7 @@ function AdminVisitorPage() {
       </div>
 
       {toast && (
-        <div className="fixed right-6 top-6 z-40 w-full max-w-[360px] px-4 sm:right-8">
+        <div className="fixed right-6 top-6 z-[999] w-full max-w-[360px] px-4 sm:right-8">
           <div
             className={`flex items-center gap-3 rounded-[16px] border px-4 py-3 shadow-[0_12px_30px_rgba(15,23,42,0.12)] ${
               toast.variant === 'success'

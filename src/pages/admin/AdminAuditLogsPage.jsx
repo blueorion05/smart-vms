@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import {
+  Calendar,
   CheckCircle2,
   ChevronDown,
   Download,
   Eye,
   Filter,
+  Globe,
   Info,
   Search,
   ShieldAlert,
+  Target,
   TriangleAlert,
+  UserRound,
+  X,
 } from 'lucide-react'
 
 const auditStats = [
@@ -27,6 +32,7 @@ const auditLogs = [
     target: 'Daniel Park (Receptionist)',
     timestamp: '2026-03-02 08:45:22',
     ip: '192.168.1.100',
+    details: 'New receptionist account created with full check-in permissions.',
   },
   {
     id: 'LG-101',
@@ -37,6 +43,7 @@ const auditLogs = [
     target: 'James Thompson (VIS-001)',
     timestamp: '2026-03-02 09:14:55',
     ip: '192.168.1.105',
+    details: 'Visitor approval granted for scheduled business meeting.',
   },
   {
     id: 'LG-102',
@@ -47,6 +54,7 @@ const auditLogs = [
     target: 'Floor 5 - Executive',
     timestamp: '2026-03-02 14:33:00',
     ip: '192.168.1.110',
+    details: 'Executive floor locked due to high-risk alert escalation.',
   },
   {
     id: 'LG-103',
@@ -57,6 +65,7 @@ const auditLogs = [
     target: 'Executive Suite - Floor 5',
     timestamp: '2026-03-02 14:32:15',
     ip: '192.168.1.140',
+    details: 'Access denied for unverified badge attempt at executive suite.',
   },
 ]
 
@@ -68,6 +77,7 @@ const severityStyles = {
 
 function AdminAuditLogsPage() {
   const [toast, setToast] = useState(null)
+  const [selectedLog, setSelectedLog] = useState(null)
 
   const handleExport = () => {
     setToast({
@@ -103,7 +113,7 @@ function AdminAuditLogsPage() {
       </div>
 
       {toast && (
-        <div className="fixed right-6 top-6 z-40 w-full max-w-[360px] px-4 sm:right-8">
+        <div className="fixed right-6 top-6 z-[999] w-full max-w-[360px] px-4 sm:right-8">
           <div
             className={`flex items-center gap-3 rounded-[16px] border px-4 py-3 shadow-[0_12px_30px_rgba(15,23,42,0.12)] ${
               toast.variant === 'success'
@@ -193,7 +203,11 @@ function AdminAuditLogsPage() {
                 <td className="px-6 py-5 text-[#64748b]">{log.timestamp}</td>
                 <td className="px-6 py-5 text-[#64748b]">{log.ip}</td>
                 <td className="px-6 py-5">
-                  <button className="grid h-8 w-8 place-items-center rounded-full text-[#2457ff] hover:bg-[#edf3ff]">
+                  <button
+                    className="grid h-8 w-8 place-items-center rounded-full text-[#2457ff] hover:bg-[#edf3ff]"
+                    type="button"
+                    onClick={() => setSelectedLog(log)}
+                  >
                     <Eye size={16} />
                   </button>
                 </td>
@@ -202,6 +216,82 @@ function AdminAuditLogsPage() {
           </tbody>
         </table>
       </div>
+
+      {selectedLog && (
+        <div className="fixed inset-0 z-40 grid place-items-center bg-slate-900/40 px-4">
+          <div className="w-full max-w-[520px] rounded-[24px] bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.35)]">
+            <div className="flex items-start justify-between gap-4 border-b border-[#e5eef9] pb-4">
+              <div className="flex items-center gap-3">
+                <span className="grid h-10 w-10 place-items-center rounded-full bg-blue-50 text-blue-600">
+                  <Info size={18} />
+                </span>
+                <div>
+                  <h3 className="m-0 text-[1.2rem] font-bold text-[#0b1937]">{selectedLog.action}</h3>
+                  <span className="text-[0.85rem] text-[#8ea1bf]">{selectedLog.id}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedLog(null)}
+                className="grid h-9 w-9 place-items-center rounded-full text-[#7f90aa] hover:bg-[#f3f5f9]"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="mt-5 grid gap-4 text-[0.9rem] text-[#42557d] sm:grid-cols-2">
+              <div className="flex items-start gap-2">
+                <UserRound size={16} className="mt-1 text-[#8ea1bf]" />
+                <div>
+                  <span className="block text-[0.78rem] text-[#8ea1bf]">User</span>
+                  <strong className="block text-[#1f2a44]">{selectedLog.user}</strong>
+                  <span className="text-[0.8rem] text-[#8ea1bf]">{selectedLog.role}</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Calendar size={16} className="mt-1 text-[#8ea1bf]" />
+                <div>
+                  <span className="block text-[0.78rem] text-[#8ea1bf]">Timestamp</span>
+                  <strong className="block text-[#1f2a44]">{selectedLog.timestamp}</strong>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Globe size={16} className="mt-1 text-[#8ea1bf]" />
+                <div>
+                  <span className="block text-[0.78rem] text-[#8ea1bf]">IP Address</span>
+                  <strong className="block text-[#1f2a44]">{selectedLog.ip}</strong>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Target size={16} className="mt-1 text-[#8ea1bf]" />
+                <div>
+                  <span className="block text-[0.78rem] text-[#8ea1bf]">Target</span>
+                  <strong className="block text-[#1f2a44]">{selectedLog.target}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 rounded-[16px] border border-[#e1e8f3] bg-[#f8fafc] p-4 text-[0.9rem] text-[#42557d]">
+              <span className="block text-[0.78rem] font-semibold uppercase tracking-wide text-[#8ea1bf]">Details</span>
+              <p className="m-0 mt-2">{selectedLog.details}</p>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between gap-3">
+              <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[0.82rem] font-semibold ${severityStyles[selectedLog.severity]}`}>
+                {selectedLog.severity} Severity
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedLog(null)}
+                className="h-10 rounded-full bg-[#f2f5f9] px-6 text-[0.95rem] font-semibold text-[#1f2a44]"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

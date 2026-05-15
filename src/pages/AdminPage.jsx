@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   AlertTriangle,
   Bell,
@@ -45,8 +45,15 @@ const notifications = [
 ]
 
 function AdminPage() {
+  const navigate = useNavigate()
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
+
+  const handleLogout = () => {
+    setIsNotificationsOpen(false)
+    setIsProfileOpen(false)
+    navigate('/')
+  }
 
   const toggleNotifications = () => {
     setIsNotificationsOpen((prev) => !prev)
@@ -106,6 +113,7 @@ function AdminPage() {
               type="button"
               className="grid h-8 w-8 place-items-center rounded-md text-[#8da4c7] transition hover:bg-white/5 hover:text-white"
               aria-label="Log out"
+              onClick={handleLogout}
             >
               <LogOut size={18} />
             </button>
@@ -186,7 +194,11 @@ function AdminPage() {
                   <button className="mt-1 flex w-full items-center gap-3 rounded-[12px] px-3 py-2 text-left text-[0.95rem] text-[#1f2a44] hover:bg-[#f5f7fb]">
                     <Settings size={16} /> System Settings
                   </button>
-                  <button className="mt-1 flex w-full items-center gap-3 rounded-[12px] px-3 py-2 text-left text-[0.95rem] text-red-600 hover:bg-red-50">
+                  <button
+                    className="mt-1 flex w-full items-center gap-3 rounded-[12px] px-3 py-2 text-left text-[0.95rem] text-red-600 hover:bg-red-50"
+                    type="button"
+                    onClick={handleLogout}
+                  >
                     <LogOut size={16} /> Sign Out
                   </button>
                 </div>

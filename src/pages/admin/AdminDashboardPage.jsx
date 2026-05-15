@@ -49,6 +49,51 @@ const healthItems = [
   { label: 'Access Points Active', value: '14/16', percent: 88, color: 'bg-amber-500' },
 ]
 
+const weeklyTraffic = {
+  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  authorized: [120, 148, 165, 152, 178, 96, 64],
+  rejected: [18, 24, 28, 20, 32, 14, 9],
+}
+
+const buildLinePath = (values, width, height, padding) => {
+  const max = Math.max(...values)
+  const min = 0
+  const range = Math.max(max - min, 1)
+  const innerWidth = width - padding * 2
+  const innerHeight = height - padding * 2
+  const points = values.map((value, index) => {
+    const x = padding + (index / (values.length - 1)) * innerWidth
+    const y = padding + innerHeight - ((value - min) / range) * innerHeight
+    return { x, y }
+  })
+
+  return points.reduce((path, point, index, all) => {
+    if (index === 0) {
+      return `M ${point.x},${point.y}`
+    }
+    const prev = all[index - 1]
+    const next = all[index + 1] || point
+    const controlX1 = prev.x + (point.x - prev.x) * 0.45
+    const controlY1 = prev.y + (point.y - prev.y) * 0.45
+    const controlX2 = point.x - (next.x - prev.x) * 0.15
+    const controlY2 = point.y - (next.y - prev.y) * 0.15
+    return `${path} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${point.x},${point.y}`
+  }, '')
+}
+
+const buildAreaPath = (values, width, height, padding) => {
+  const linePath = buildLinePath(values, width, height, padding)
+  const max = Math.max(...values)
+  const min = 0
+  const range = Math.max(max - min, 1)
+  const innerWidth = width - padding * 2
+  const innerHeight = height - padding * 2
+  const firstX = padding
+  const lastX = padding + innerWidth
+  const baselineY = padding + innerHeight - ((min - min) / range) * innerHeight
+  return `${linePath} L ${lastX},${baselineY} L ${firstX},${baselineY} Z`
+}
+
 function AdminDashboardPage() {
   return (
     <div className="grid gap-4 pb-2">
@@ -108,7 +153,59 @@ function AdminDashboardPage() {
               This Week <ChevronDown size={16} />
             </button>
           </header>
-          <div className="mt-6 h-[260px] rounded-[16px] bg-[linear-gradient(180deg,rgba(255,67,92,0.14),rgba(255,67,92,0.02)),repeating-linear-gradient(0deg,rgba(155,169,196,0.16),rgba(155,169,196,0.16)_1px,transparent_1px,transparent_44px)]" />
+          <div className="chart-entrance relative mt-6 h-[260px] overflow-hidden rounded-[16px] bg-[linear-gradient(180deg,rgba(255,67,92,0.14),rgba(255,67,92,0.02)),repeating-linear-gradient(0deg,rgba(155,169,196,0.16),rgba(155,169,196,0.16)_1px,transparent_1px,transparent_44px)]">
+            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 600 220" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="authorizedFill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor="#2f6df7" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#2f6df7" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path
+                fill="url(#authorizedFill)"
+                d={buildAreaPath(weeklyTraffic.authorized, 600, 220, 28)}
+              />
+              <path
+                fill="none"
+                stroke="#2f6df7"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d={buildLinePath(weeklyTraffic.authorized, 600, 220, 28)}
+              />
+              <path
+                fill="none"
+                stroke="#fa1234"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d={buildLinePath(weeklyTraffic.rejected, 600, 220, 28)}
+              />
+              {[0, 55, 110, 165, 220].map((tick) => (
+                <text
+                  key={tick}
+                  x="6"
+                  y={28 + 164 - (tick / 220) * 164}
+                  fontSize="10"
+                  fill="#9aa8c2"
+                >
+                  {tick}
+                </text>
+              ))}
+              {weeklyTraffic.labels.map((label, index) => (
+                <text
+                  key={label}
+                  x={28 + (index / (weeklyTraffic.labels.length - 1)) * 544}
+                  y="210"
+                  fontSize="10"
+                  fill="#9aa8c2"
+                  textAnchor="middle"
+                >
+                  {label}
+                </text>
+              ))}
+            </svg>
+          </div>
           <div className="mt-4 flex justify-center gap-5 text-[#42557d]">
             <span className="inline-flex items-center gap-1.5"><Waypoints size={14} className="text-[#2f6df7]" /> Authorized</span>
             <span className="inline-flex items-center gap-1.5"><AlertTriangle size={14} className="text-[#fa1234]" /> Rejected</span>
@@ -118,7 +215,7 @@ function AdminDashboardPage() {
         <article className="flex min-h-0 flex-col rounded-[18px] border border-[#d6e2fa] bg-white p-5 shadow-sm">
           <h3 className="m-0 text-[1.15rem] font-bold text-[#0b1937]">Visit Purposes</h3>
           <small className="mt-1 block text-[#8392ac]">Today&apos;s distribution</small>
-          <div className="mx-auto my-6 aspect-square w-[170px] rounded-full bg-[conic-gradient(#2d49bc_0_42%,#1797b9_42%_60%,#723ddb_60%_72%,#ef6a0b_72%_80%,#1ca556_80%_90%,#717d94_90%_100%)] [mask:radial-gradient(circle_at_center,transparent_41%,#000_42%)]" />
+          <div className="chart-entrance mx-auto my-6 aspect-square w-[170px] rounded-full bg-[conic-gradient(#2d49bc_0_42%,#1797b9_42%_60%,#723ddb_60%_72%,#ef6a0b_72%_80%,#1ca556_80%_90%,#717d94_90%_100%)] [mask:radial-gradient(circle_at_center,transparent_41%,#000_42%)]" />
           <ul className="grid gap-3 pl-0 text-[#304a79]">
             <li className="flex items-center justify-between gap-3"><span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#2d49bc]" />Business Meeting</span><strong>42%</strong></li>
             <li className="flex items-center justify-between gap-3"><span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#1797b9]" />Interview</span><strong>18%</strong></li>
@@ -137,7 +234,7 @@ function AdminDashboardPage() {
             </div>
             <span className="inline-flex items-center gap-2 text-[#42557d]"><Clock3 size={16} /> Today</span>
           </header>
-          <div className="mt-6 flex h-[260px] items-end gap-4 rounded-[16px] bg-[linear-gradient(180deg,rgba(23,57,153,0.04),rgba(23,57,153,0.01))] px-4 pb-5 pt-2">
+          <div className="chart-entrance mt-6 flex h-[260px] items-end gap-4 rounded-[16px] bg-[linear-gradient(180deg,rgba(23,57,153,0.04),rgba(23,57,153,0.01))] px-4 pb-5 pt-2">
             {[4, 12, 46, 90, 68, 58, 49, 43, 61, 55, 50, 38, 16, 5].map((value, index) => (
               <div key={index} className="flex flex-1 flex-col items-center gap-2">
                 <div className="w-full rounded-t-[4px] bg-[#2448b7]" style={{ height: `${value * 1.75}px` }} />
